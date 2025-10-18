@@ -14,91 +14,7 @@
   }
 
   .center-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ff1493;
-    font-size: 32px;
-    font-weight: bold;
-    text-align: center;
-    text-shadow: 0 0 15px #ff69b4, 0 0 30px #ffb6c1;
-    pointer-events: none;
-  }
-
-  .falling-text {
-    position: absolute;
-    top: -40px;
-    color: #ff69b4;
-    font-size: 22px;
-    font-weight: 600;
-    opacity: 0.9;
-    text-shadow: 0 0 6px #ffc0cb;
-    animation: fall linear forwards;
-  }
-
-  @keyframes fall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(15deg); opacity: 0; }
-  }
-
-  .petal {
-    position: absolute;
-    top: -50px;
-    font-size: 20px;
-    animation: petalFall linear forwards;
-  }
-
-  @keyframes petalFall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-  }
-
-  .credit {
-    position: absolute;
-    bottom: 10px;
-    right: 15px;
-    color: #ff69b4;
-    font-size: 14px;
-    opacity: 0.7;
-    font-style: italic;
-  }
-
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-</style>
-</head>
-<body>
-
-<canvas id="heartCanvas"></canvas>
-<div class="center-text">Happy Women's Day💖</div>
-<div class="credit">by Kietynho</div>
-
-<script>
-  const canvas = document.getElementById("heartCanvas");
-  const ctx = canvas.getContext("2d");
-  let W = window.innerWidth, H = window.innerHeight;
-  canvas.width = W; canvas.height = H;
-
-  const particles = [];
-
-  function heartFunction(t) {
-    return {
-      x: 16 * Math.pow(Math.sin(t), 3),
-      y: -(13 * Math.cos(t) - 5 * Math.cos(2 * t)
-         - 2 * Math.cos(3 * t) - Math.cos(4 * t))
-    };
-  }
-
-  function spawnParticle() {
-    const t = Math.random() * Math.PI * 2;
-    const pos = heartFunction(t);
-
-    // 🔧 Thêm tự động scale theo màn hình
-    const scale = Math.min(W, H) / 50; // tỷ lệ co giãn, tự động theo màn hình
+    pos40; // tỷ lệ co giãn, tự động theo màn hình
     const x = W / 2 + pos.x * scale;
     const y = H / 2 + pos.y * scale;
 
@@ -168,4 +84,5 @@
 
 </body>
 </html>
+
 
