@@ -13,7 +13,6 @@
     font-family: 'Segoe UI', sans-serif;
   }
 
-  /* Chữ chính giữa tim */
   .center-text {
     position: absolute;
     top: 50%;
@@ -27,7 +26,6 @@
     pointer-events: none;
   }
 
-  /* Chữ rơi */
   .falling-text {
     position: absolute;
     top: -40px;
@@ -44,7 +42,6 @@
     100% { transform: translateY(100vh) rotate(15deg); opacity: 0; }
   }
 
-  /* Hoa rơi */
   .petal {
     position: absolute;
     top: -50px;
@@ -57,7 +54,6 @@
     100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
   }
 
-  /* Ghi credit */
   .credit {
     position: absolute;
     bottom: 10px;
@@ -90,7 +86,6 @@
   const particles = [];
 
   function heartFunction(t) {
-    // Công thức hình trái tim
     return {
       x: 16 * Math.pow(Math.sin(t), 3),
       y: -(13 * Math.cos(t) - 5 * Math.cos(2 * t)
@@ -101,10 +96,14 @@
   function spawnParticle() {
     const t = Math.random() * Math.PI * 2;
     const pos = heartFunction(t);
-    const x = W / 2 + pos.x * 15;
-    const y = H / 2 + pos.y * 15;
+
+    // 🔧 Thêm tự động scale theo màn hình
+    const scale = Math.min(W, H) / 20; // tỷ lệ co giãn, tự động theo màn hình
+    const x = W / 2 + pos.x * scale;
+    const y = H / 2 + pos.y * scale;
+
     const size = Math.random() * 3 + 1;
-    const color = `rgba(255, 105, 180, ${Math.random() * 0.6 + 0.4})`; // hồng đậm
+    const color = `rgba(255, 105, 180, ${Math.random() * 0.6 + 0.4})`;
     particles.push({ x, y, size, color, life: 1 });
   }
 
@@ -125,13 +124,13 @@
   }
 
   function loop() {
-    for (let i = 0; i < 50; i++) spawnParticle(); // chỉnh số này để spawn nhiều hơn
+    for (let i = 0; i < 50; i++) spawnParticle();
     draw();
     requestAnimationFrame(loop);
   }
   loop();
 
-  // Tạo hoa rơi
+  // 🌸 Hoa rơi
   const petals = ["🌸", "🌷", "💗", "🌺"];
   function createPetal() {
     const petal = document.createElement('div');
@@ -145,7 +144,7 @@
   }
   setInterval(createPetal, 600);
 
-  // Tạo chữ rơi
+  // 💕 Chữ rơi
   const messages = ["20/10 vui vẻ nha 💗", "Chúc bạn xinh đẹp & hạnh phúc 🌸"];
   function createFallingText() {
     const text = document.createElement('div');
@@ -158,12 +157,14 @@
   }
   setInterval(createFallingText, 1200);
 
+  // 📱 Cập nhật lại khi đổi kích thước
   window.addEventListener('resize', () => {
-    W = window.innerWidth; H = window.innerHeight;
-    canvas.width = W; canvas.height = H;
+    W = window.innerWidth; 
+    H = window.innerHeight;
+    canvas.width = W; 
+    canvas.height = H;
   });
 </script>
 
 </body>
 </html>
-
