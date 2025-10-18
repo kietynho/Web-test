@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Women's Day 💝</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(180deg, #ffe6f2, #fff0f8, #ffffff);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  /* Trái tim hồng rỗng - đứng yên */
+  .heart {
+    position: relative;
+    width: 250px;
+    height: 220px;
+    border: 8px solid #ff69b4;
+    border-radius: 50% 50% 0 0;
+    transform: rotate(-45deg);
+    margin-bottom: 40px;
+  }
+  .heart::before,
+  .heart::after {
+    content: "";
+    position: absolute;
+    width: 250px;
+    height: 220px;
+    border: 8px solid #ff69b4;
+    border-radius: 50%;
+  }
+  .heart::before {
+    top: 0;
+    left: 50%;
+  }
+  .heart::after {
+    top: 50%;
+    left: 0;
+  }
+
+  /* Dòng chữ chính trong tim */
+  .center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    font-size: 30px;
+    color: deeppink;
+    font-weight: bold;
+    white-space: nowrap;
+    text-shadow: 0 0 10px #ff9ac6, 0 0 20px #ff69b4;
+  }
+
+  /* Chữ rơi xuống */
+  .falling-text {
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: hotpink;
+    font-size: 24px;
+    font-weight: 600;
+    text-shadow: 0 0 6px #ffb6c1;
+    animation: fall 5s linear infinite;
+  }
+
+  @keyframes fall {
+    0% {
+      top: -50px;
+      opacity: 1;
+    }
+    100% {
+      top: 110vh;
+      opacity: 0;
+    }
+  }
+
+  /* Hiệu ứng hoa/cánh rơi */
+  .petal {
+    position: absolute;
+    top: -50px;
+    font-size: 20px;
+    opacity: 0.8;
+    animation: petalFall linear infinite;
+  }
+
+  @keyframes petalFall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(110vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* Lấp lánh nhẹ */
+  .sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  @keyframes sparkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+</style>
+</head>
+<body>
+
+<div class="heart">
+  <div class="center-text">Happy Women's Day 💝</div>
+</div>
+
+<script>
+  const messages = ["20/10 vui vẻ nha 💗", "20/10 hạnh phúc"];
+  const petals = ["🌸", "🌷", "💗", "💞", "🌺"];
+
+  // Tạo chữ rơi xuống
+  function createFallingText() {
+    const text = document.createElement('div');
+    text.className = 'falling-text';
+    text.textContent = messages[Math.floor(Math.random() * messages.length)];
+    text.style.left = Math.random() * 80 + 10 + '%';
+    text.style.animationDuration = (4 + Math.random() * 2) + 's';
+    document.body.appendChild(text);
+    setTimeout(() => text.remove(), 6000);
+  }
+  setInterval(createFallingText, 900);
+
+  // Tạo hoa/cánh rơi
+  function createPetal() {
+    const petal = document.createElement('div');
+    petal.className = 'petal';
+    petal.textContent = petals[Math.floor(Math.random() * petals.length)];
+    petal.style.left = Math.random() * 100 + 'vw';
+    petal.style.animationDuration = (6 + Math.random() * 4) + 's';
+    petal.style.fontSize = (16 + Math.random() * 12) + 'px';
+    document.body.appendChild(petal);
+    setTimeout(() => petal.remove(), 10000);
+  }
+  setInterval(createPetal, 600);
+
+  // Hiệu ứng lấp lánh quanh tim
+  function createSparkle() {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+    sparkle.style.left = 50 + (Math.random() * 200 - 100) + 'px';
+    sparkle.style.top = 50 + (Math.random() * 200 - 100) + 'px';
+    sparkle.style.animationDelay = Math.random() * 2 + 's';
+    document.querySelector('.heart').appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 3000);
+  }
+  setInterval(createSparkle, 400);
+</script>
+
+</body>
+</html>
