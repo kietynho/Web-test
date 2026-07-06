@@ -1,6 +1,8 @@
-const GEMINI_API_KEY = "";
+// 1. XÓA KEY DÁN CỨNG ĐỂ TRÁNH LỘ TRÊN GITHUB PAGES. Web sẽ dùng key từ ô Settings.
+const GEMINI_API_KEY = ""; 
 
-const GEMINI_MODEL = "gemini-2.0-flash";
+// 2. CẬP NHẬT LÊN MODEL 2.5-FLASH ĐỂ SỬA LỖI QUOTA (LIMIT 0)
+const GEMINI_MODEL = "gemini-2.5-flash"; 
 const GEMINI_ENDPOINT = (key) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`;
 
@@ -26,6 +28,8 @@ function initAiChat() {
   const form = document.getElementById("chat-form");
   const input = document.getElementById("chat-input");
 
+  if (!bubble || !windowEl || !form || !input) return; // Bảo vệ nếu thiếu phần tử HTML
+
   bubble.addEventListener("click", () => {
     windowEl.classList.toggle("hidden");
     bubble.classList.toggle("hidden");
@@ -34,6 +38,7 @@ function initAiChat() {
     }
     input.focus();
   });
+
   document.getElementById("chat-close").addEventListener("click", () => {
     windowEl.classList.add("hidden");
     bubble.classList.remove("hidden");
@@ -54,6 +59,8 @@ function initAiChat() {
 /** Appends a chat bubble; returns the element (for streaming/typing updates). */
 function appendMessage(role, text) {
   const container = document.getElementById("chat-messages");
+  if (!container) return null;
+  
   const el = document.createElement("div");
   el.className = `chat-msg ${role}`;
   el.textContent = text;
@@ -65,18 +72,24 @@ function appendMessage(role, text) {
 /** Sends the conversation to Gemini and renders the reply. */
 async function sendToGemini(userText) {
   const key = getGeminiKey();
+  const messagesContainer = document.getElementById("chat-messages");
+
   if (!key) {
     appendMessage("ai", "I need a Gemini API key to chat. Open Settings (gear icon, top right), paste your free key from Google AI Studio, and try again!");
     return;
   }
 
+  // Đưa tin nhắn user vào lịch sử theo cấu trúc chuẩn của Gemini API
   chatHistory.push({ role: "user", parts: [{ text: userText }] });
 
-  // Typing indicator
-  const typingEl = document.getElementById("chat-messages").appendChild(document.createElement("div"));
+  // Tạo hiệu ứng ba dấu chấm đang chạy (Typing indicator)
+  const typingEl = document.createElement("div");
   typingEl.className = "chat-msg ai typing-dots";
   typingEl.innerHTML = "<span></span><span></span><span></span>";
-  typingEl.parentElement.scrollTop = typingEl.parentElement.scrollHeight;
+  if (messagesContainer) {
+    messagesContainer.appendChild(typingEl);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
 
   try {
     const res = await fetch(GEMINI_ENDPOINT(key), {
@@ -84,32 +97,38 @@ async function sendToGemini(userText) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: AI_SYSTEM_PROMPT }] },
-        contents: chatHistory.slice(-20), // keep the last 10 exchanges
+        contents: chatHistory.slice(-20), // Giữ lại tối đa 10 cặp hội thoại gần nhất
         generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
       }),
     });
+
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error?.message || `HTTP ${res.status}`);
     }
+
     const data = await res.json();
     const reply = data.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "Sorry, I couldn't think of a reply. Try again?";
+    
+    // Lưu phản hồi của AI vào lịch sử
     chatHistory.push({ role: "model", parts: [{ text: reply }] });
-    typingEl.remove();
+    
+    typingEl.remove(); // Xóa hiệu ứng ba chấm
     appendMessage("ai", reply);
   } catch (err) {
     typingEl.remove();
-    chatHistory.pop(); // drop the failed user turn so retries stay clean
+    chatHistory.pop(); // Xóa câu chat lỗi của user để không làm hỏng chuỗi hội thoại sau này
     appendMessage("ai", `Oops — the AI request failed (${err.message}). Check your API key in Settings and try again.`);
   }
 }
 
 /* ---------------- Settings modal (API key management) ---------------- */
-
 function initSettings() {
   const modal = document.getElementById("settings-modal");
   const keyInput = document.getElementById("gemini-key-input");
   const statusEl = document.getElementById("settings-status");
+
+  if (!modal || !keyInput || !statusEl) return;
 
   const open = () => {
     keyInput.value = localStorage.getItem(GEMINI_STORAGE_KEY) || "";
@@ -141,3 +160,6 @@ function initSettings() {
     statusEl.className = "text-xs mt-3 text-center text-neutral-500";
   });
 }
+
+// Gọi hàm này khi file script được tải hoặc lồng vào sự kiện DOMContentLoaded ở app.js chính
+// document.addEventListener("DOMContentLoaded", initAiChat);
