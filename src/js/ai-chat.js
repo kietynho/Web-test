@@ -7,25 +7,11 @@ const part5 = "7NZRr";
 const part6 = "wE2hta0";
 const part7 = "MRFVvAmKg";
 
-const GEMINI_STORAGE_KEY = "greenenglish_gemini_key";
-
-/** Hàm lấy API Key an toàn */
-function getGeminiKey() {
-  // Ưu tiên 1: Lấy key riêng do người dùng tự nhập trong mục Settings trước
-  const userKey = localStorage.getItem(GEMINI_STORAGE_KEY);
-  if (userKey && userKey.trim() !== "") {
-    return userKey.trim();
-  }
-  
-  // Ưu tiên 2: Nếu người dùng không nhập gì, tự động nối chuỗi lấy key mặc định của bạn
-  const systemKey = part1 + part2 + part3 + part4 + part5 + part6 + part7;
-  return systemKey;
-} 
-
-// 2. CẬP NHẬT LÊN MODEL 2.5-FLASH ĐỂ SỬA LỖI QUOTA (LIMIT 0)
 const GEMINI_MODEL = "gemini-2.5-flash"; 
 const GEMINI_ENDPOINT = (key) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`;
+
+const GEMINI_STORAGE_KEY = "greenenglish_gemini_key";
 
 /** System prompt: friendly, supportive English tutor persona. */
 const AI_SYSTEM_PROMPT = `You are "GreenEnglish Tutor", a friendly, patient and supportive English teacher.
@@ -37,13 +23,23 @@ const AI_SYSTEM_PROMPT = `You are "GreenEnglish Tutor", a friendly, patient and 
 /** Rolling conversation history sent with each request. */
 const chatHistory = [];
 
+/** Hàm lấy API Key (Ưu tiên key người dùng nhập, nếu không có dùng key hệ thống) */
+function getGeminiKey() {
+  const userKey = localStorage.getItem(GEMINI_STORAGE_KEY);
+  if (userKey && userKey.trim() !== "") {
+    return userKey.trim();
+  }
+  const systemKey = part1 + part2 + part3 + part4 + part5 + part6 + part7;
+  return systemKey;
+} 
+
 function initAiChat() {
   const bubble = document.getElementById("chat-bubble");
   const windowEl = document.getElementById("chat-window");
   const form = document.getElementById("chat-form");
   const input = document.getElementById("chat-input");
 
-  if (!bubble || !windowEl || !form || !input) return; // Bảo vệ nếu thiếu phần tử HTML
+  if (!bubble || !windowEl || !form || !input) return;
 
   bubble.addEventListener("click", () => {
     windowEl.classList.toggle("hidden");
@@ -71,7 +67,7 @@ function initAiChat() {
   initSettings();
 }
 
-/** Appends a chat bubble; returns the element (for streaming/typing updates). */
+/** Appends a chat bubble; returns the element */
 function appendMessage(role, text) {
   const container = document.getElementById("chat-messages");
   if (!container) return null;
@@ -80,7 +76,11 @@ function appendMessage(role, text) {
   el.className = `chat-msg ${role}`;
   el.textContent = text;
   container.appendChild(el);
+  
+  // Ép cuộn ngay lập tức khi chèn tin nhắn
+  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
   container.scrollTop = container.scrollHeight;
+  
   return el;
 }
 
@@ -94,15 +94,15 @@ async function sendToGemini(userText) {
     return;
   }
 
-  // Đưa tin nhắn user vào lịch sử theo cấu trúc chuẩn của Gemini API
   chatHistory.push({ role: "user", parts: [{ text: userText }] });
 
-  // Tạo hiệu ứng ba dấu chấm đang chạy (Typing indicator)
+  // Tạo hiệu ứng loading
   const typingEl = document.createElement("div");
   typingEl.className = "chat-msg ai typing-dots";
   typingEl.innerHTML = "<span></span><span></span><span></span>";
   if (messagesContainer) {
     messagesContainer.appendChild(typingEl);
+    typingEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
 
@@ -112,7 +112,7 @@ async function sendToGemini(userText) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: AI_SYSTEM_PROMPT }] },
-        contents: chatHistory.slice(-20), // Giữ lại tối đa 10 cặp hội thoại gần nhất
+        contents: chatHistory.slice(-20),
         generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
       }),
     });
@@ -125,17 +125,17 @@ async function sendToGemini(userText) {
     const data = await res.json();
     const reply = data.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "Sorry, I couldn't think of a reply. Try again?";
     
-    // Lưu phản hồi của AI vào lịch sử
     chatHistory.push({ role: "model", parts: [{ text: reply }] });
     
-    typingEl.remove(); // Xóa hiệu ứng ba chấm
+    if (typingEl) typingEl.remove(); // Xóa ba chấm xong mới hiện tin nhắn mới
     appendMessage("ai", reply);
+    
   } catch (err) {
-    typingEl.remove();
-    chatHistory.pop(); // Xóa câu chat lỗi của user để không làm hỏng chuỗi hội thoại sau này
+    if (typingEl) typingEl.remove();
+    chatHistory.pop(); 
     appendMessage("ai", `Oops — the AI request failed (${err.message}). Check your API key in Settings and try again.`);
   }
-}
+} // <--- ĐÃ THÊM DẤU ĐÓNG NGOẶC QUAN TRỌNG Ở ĐÂY để tách biệt hoàn toàn hàm
 
 /* ---------------- Settings modal (API key management) ---------------- */
 function initSettings() {
@@ -175,6 +175,3 @@ function initSettings() {
     statusEl.className = "text-xs mt-3 text-center text-neutral-500";
   });
 }
-
-// Gọi hàm này khi file script được tải hoặc lồng vào sự kiện DOMContentLoaded ở app.js chính
-// document.addEventListener("DOMContentLoaded", initAiChat);
