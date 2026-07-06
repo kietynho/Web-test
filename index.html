@@ -1,171 +1,253 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Women's Day💖</title>
-<style>
-  body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(180deg, #ffe6f2, #fff0f8, #ffffff);
-    overflow: hidden;
-    font-family: 'Segoe UI', sans-serif;
-  }
-
-  .center-text {
-    position: absolute;
-    top: 52%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ff1493;
-    font-size: 32px;
-    font-weight: bold;
-    text-align: center;
-    text-shadow: 0 0 15px #ff69b4, 0 0 30px #ffb6c1;
-    pointer-events: none;
-  }
-
-  .falling-text {
-    position: absolute;
-    top: -40px;
-    color: #ff69b4;
-    font-size: 22px;
-    font-weight: 600;
-    opacity: 0.9;
-    text-shadow: 0 0 6px #ffc0cb;
-    animation: fall linear forwards;
-  }
-
-  @keyframes fall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(15deg); opacity: 0; }
-  }
-
-  .petal {
-    position: absolute;
-    top: -50px;
-    font-size: 20px;
-    animation: petalFall linear forwards;
-  }
-
-  @keyframes petalFall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-  }
-
-  .credit {
-    position: absolute;
-    bottom: 10px;
-    right: 15px;
-    color: #ff69b4;
-    font-size: 14px;
-    opacity: 0.7;
-    font-style: italic;
-  }
-
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-</style>
-</head>
-<body>
-
-<canvas id="heartCanvas"></canvas>
-<div class="center-text">Happy Women's Day💖</div>
-<div class="credit">by Kietynho</div>
-
-<script>
-  const canvas = document.getElementById("heartCanvas");
-  const ctx = canvas.getContext("2d");
-  let W = window.innerWidth, H = window.innerHeight;
-  canvas.width = W; canvas.height = H;
-
-  const particles = [];
-
-  function heartFunction(t) {
-    return {
-      x: 16 * Math.pow(Math.sin(t), 3),
-      y: -(13 * Math.cos(t) - 5 * Math.cos(2 * t)
-         - 2 * Math.cos(3 * t) - Math.cos(4 * t))
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GreenEnglish — Learn English, the Minimal Way</title>
+  <meta name="description" content="GreenEnglish: a minimalist English learning app with dictionary, CEFR vocabulary materials, flashcards, games and an AI tutor." />
+ 
+  <!-- Tailwind CSS (CDN, GitHub Pages compatible) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { brand: { DEFAULT: '#10B981', dark: '#059669', light: '#34D399' } },
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] }
+        }
+      }
     };
-  }
-
-  function spawnParticle() {
-    const t = Math.random() * Math.PI * 2;
-    const pos = heartFunction(t);
-
-    // 🔧 Thêm tự động scale theo màn hình
-    const scale = Math.min(W, H) / 40; // tỷ lệ co giãn, tự động theo màn hình
-    const x = W / 2 + pos.x * scale;
-    const y = H / 2 + pos.y * scale;
-
-    const size = Math.random() * 3 + 1;
-    const color = `rgba(255, 105, 180, ${Math.random() * 0.6 + 0.4})`;
-    particles.push({ x, y, size, color, life: 1 });
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.fill();
-      p.life -= 0.01;
-      p.size *= 0.98;
-    }
-    for (let i = particles.length - 1; i >= 0; i--) {
-      if (particles[i].life <= 0) particles.splice(i, 1);
-    }
-  }
-
-  function loop() {
-    for (let i = 0; i < 50; i++) spawnParticle();
-    draw();
-    requestAnimationFrame(loop);
-  }
-  loop();
-
-  // 🌸 Hoa rơi
-  const petals = ["🌸", "🌷", "💗", "🌺"];
-  function createPetal() {
-    const petal = document.createElement('div');
-    petal.className = 'petal';
-    petal.textContent = petals[Math.floor(Math.random() * petals.length)];
-    petal.style.left = Math.random() * 100 + 'vw';
-    petal.style.animationDuration = (6 + Math.random() * 5) + 's';
-    petal.style.fontSize = (16 + Math.random() * 12) + 'px';
-    document.body.appendChild(petal);
-    setTimeout(() => petal.remove(), 10000);
-  }
-  setInterval(createPetal, 600);
-
-  // 💕 Chữ rơi
-  const messages = ["20/10 vui vẻ nha 💗", "Chúc bạn xinh đẹp & hạnh phúc 🌸"];
-  function createFallingText() {
-    const text = document.createElement('div');
-    text.className = 'falling-text';
-    text.textContent = messages[Math.floor(Math.random() * messages.length)];
-    text.style.left = Math.random() * 80 + 10 + '%';
-    text.style.animationDuration = (4 + Math.random() * 3) + 's';
-    document.body.appendChild(text);
-    setTimeout(() => text.remove(), 6000);
-  }
-  setInterval(createFallingText, 1200);
-
-  // 📱 Cập nhật lại khi đổi kích thước
-  window.addEventListener('resize', () => {
-    W = window.innerWidth; 
-    H = window.innerHeight;
-    canvas.width = W; 
-    canvas.height = H;
-  });
-</script>
-
+  </script>
+ 
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+ 
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+ 
+  <!-- App styles -->
+  <link rel="stylesheet" href="src/css/style.css" />
+</head>
+<body class="bg-white text-neutral-900 dark:bg-black dark:text-neutral-100 antialiased min-h-screen transition-colors duration-300">
+ 
+  <!-- ======================= HEADER ======================= -->
+  <header class="fixed top-0 inset-x-0 z-40 glass-panel border-b border-neutral-200/60 dark:border-neutral-800/60">
+    <div class="max-w-5xl mx-auto flex items-center justify-between px-4 h-14">
+      <a href="#home" class="flex items-center gap-2 select-none" data-nav="home">
+        <span class="w-8 h-8 rounded-xl bg-brand flex items-center justify-center shadow-lg shadow-brand/40">
+          <i data-lucide="leaf" class="w-5 h-5 text-white"></i>
+        </span>
+        <span class="text-lg font-extrabold tracking-tight">Green<span class="text-brand">English</span></span>
+      </a>
+      <div class="flex items-center gap-2">
+        <button id="theme-toggle" class="glass-btn w-9 h-9 rounded-full flex items-center justify-center" aria-label="Toggle dark / light theme">
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+          <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+        </button>
+        <button id="settings-btn" class="glass-btn w-9 h-9 rounded-full flex items-center justify-center" aria-label="Settings">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+ 
+  <!-- ======================= MAIN ======================= -->
+  <main class="max-w-5xl mx-auto px-4 pt-20 pb-28">
+ 
+    <!-- ============ HOME TAB ============ -->
+    <section id="tab-home" class="tab-page">
+      <div class="text-center py-10 md:py-16">
+        <span class="inline-flex items-center gap-2 glass-chip px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest text-brand mb-6">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Minimal · Modern · Free
+        </span>
+        <h1 class="text-4xl md:text-6xl font-black tracking-tight leading-tight">
+          Master English<br /><span class="text-brand">the minimal way.</span>
+        </h1>
+        <p class="mt-5 max-w-xl mx-auto text-neutral-500 dark:text-neutral-400 text-base md:text-lg">
+          Dictionary lookups, CEFR vocabulary lists (A1–C1), flashcards, word games and a friendly AI tutor — all in one clean place.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <button class="glass-btn-primary px-6 py-3 rounded-2xl font-semibold flex items-center gap-2" data-nav="vocabulary">
+            <i data-lucide="search" class="w-4 h-4"></i> Look up a word
+          </button>
+          <button class="glass-btn px-6 py-3 rounded-2xl font-semibold flex items-center gap-2" data-nav="practice">
+            <i data-lucide="gamepad-2" class="w-4 h-4"></i> Start practicing
+          </button>
+        </div>
+      </div>
+ 
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+        <button class="glass-card p-6 rounded-3xl text-left group" data-nav="vocabulary">
+          <span class="w-11 h-11 rounded-2xl bg-brand/10 text-brand flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i data-lucide="book-open" class="w-5 h-5"></i></span>
+          <h3 class="font-bold text-lg">Dictionary</h3>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Phonetics, audio, meanings and examples for any word, A1 to C1.</p>
+        </button>
+        <button class="glass-card p-6 rounded-3xl text-left group" data-nav="materials">
+          <span class="w-11 h-11 rounded-2xl bg-brand/10 text-brand flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i data-lucide="layers" class="w-5 h-5"></i></span>
+          <h3 class="font-bold text-lg">Materials</h3>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Curated word lists by CEFR level and modern topics like AI &amp; environment.</p>
+        </button>
+        <button class="glass-card p-6 rounded-3xl text-left group" data-nav="practice">
+          <span class="w-11 h-11 rounded-2xl bg-brand/10 text-brand flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i data-lucide="zap" class="w-5 h-5"></i></span>
+          <h3 class="font-bold text-lg">Practice</h3>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Flip flashcards and play the word-guessing game to lock words in.</p>
+        </button>
+      </div>
+    </section>
+ 
+    <!-- ============ VOCABULARY TAB ============ -->
+    <section id="tab-vocabulary" class="tab-page hidden">
+      <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mb-1">Dictionary</h2>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Search any English word — powered by the Free Dictionary API.</p>
+ 
+      <form id="dict-form" class="glass-card rounded-3xl p-2 flex items-center gap-2">
+        <i data-lucide="search" class="w-5 h-5 ml-3 text-neutral-400 shrink-0"></i>
+        <input id="dict-input" type="text" autocomplete="off" spellcheck="false" placeholder="Type a word, e.g. sustainability…"
+               class="flex-1 bg-transparent outline-none px-1 py-3 text-base placeholder:text-neutral-400" />
+        <button type="submit" class="glass-btn-primary px-5 py-2.5 rounded-2xl font-semibold text-sm">Search</button>
+      </form>
+ 
+      <div id="dict-suggestions" class="flex flex-wrap gap-2 mt-4"></div>
+      <div id="dict-result" class="mt-6"></div>
+    </section>
+ 
+    <!-- ============ MATERIALS TAB ============ -->
+    <section id="tab-materials" class="tab-page hidden">
+      <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mb-1">Materials</h2>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Vocabulary lists organized by CEFR level and modern topics.</p>
+ 
+      <div id="materials-filters" class="flex flex-wrap gap-2 mb-6"></div>
+      <div id="materials-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+    </section>
+ 
+    <!-- ============ PRACTICE TAB ============ -->
+    <section id="tab-practice" class="tab-page hidden">
+      <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mb-1">Practice</h2>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Choose a mode and a CEFR level, then train your vocabulary.</p>
+ 
+      <div class="flex flex-wrap gap-2 mb-4" id="practice-mode-switch">
+        <button class="glass-chip px-5 py-2.5 rounded-2xl font-semibold text-sm practice-mode-btn active" data-mode="flashcards">
+          <i data-lucide="rectangle-horizontal" class="w-4 h-4 inline -mt-0.5 mr-1"></i> Flashcards
+        </button>
+        <button class="glass-chip px-5 py-2.5 rounded-2xl font-semibold text-sm practice-mode-btn" data-mode="game">
+          <i data-lucide="puzzle" class="w-4 h-4 inline -mt-0.5 mr-1"></i> Word Guessing
+        </button>
+      </div>
+ 
+      <div class="flex flex-wrap gap-2 mb-8" id="practice-level-switch"></div>
+ 
+      <!-- Flashcards module -->
+      <div id="practice-flashcards">
+        <div class="max-w-md mx-auto">
+          <div id="flashcard" class="flashcard mx-auto cursor-pointer" tabindex="0" role="button" aria-label="Flip flashcard">
+            <div class="flashcard-inner">
+              <div class="flashcard-face flashcard-front glass-card rounded-3xl">
+                <span id="fc-level" class="text-xs font-bold uppercase tracking-widest text-brand"></span>
+                <span id="fc-word" class="text-3xl md:text-4xl font-black mt-3"></span>
+                <span class="mt-6 text-xs text-neutral-400 flex items-center gap-1"><i data-lucide="pointer" class="w-3.5 h-3.5"></i> Tap to flip</span>
+              </div>
+              <div class="flashcard-face flashcard-back glass-card rounded-3xl">
+                <span id="fc-meaning" class="text-lg md:text-xl font-semibold text-center px-6"></span>
+                <span id="fc-example" class="mt-4 text-sm italic text-neutral-500 dark:text-neutral-400 text-center px-6"></span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-center gap-3 mt-6">
+            <button id="fc-prev" class="glass-btn w-12 h-12 rounded-2xl flex items-center justify-center" aria-label="Previous card"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+            <span id="fc-counter" class="text-sm font-semibold text-neutral-500 dark:text-neutral-400 w-16 text-center"></span>
+            <button id="fc-next" class="glass-btn w-12 h-12 rounded-2xl flex items-center justify-center" aria-label="Next card"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+            <button id="fc-shuffle" class="glass-btn w-12 h-12 rounded-2xl flex items-center justify-center" aria-label="Shuffle cards"><i data-lucide="shuffle" class="w-5 h-5"></i></button>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Word-guessing game module -->
+      <div id="practice-game" class="hidden">
+        <div class="max-w-md mx-auto glass-card rounded-3xl p-6 text-center">
+          <div class="flex items-center justify-between mb-4">
+            <span id="game-level-badge" class="text-xs font-bold uppercase tracking-widest text-brand"></span>
+            <span id="game-lives" class="text-sm font-semibold"></span>
+          </div>
+          <p id="game-hint" class="text-sm text-neutral-500 dark:text-neutral-400 mb-6"></p>
+          <div id="game-word" class="flex flex-wrap justify-center gap-2 mb-8"></div>
+          <div id="game-keyboard" class="flex flex-wrap justify-center gap-1.5"></div>
+          <div id="game-status" class="mt-6 min-h-[2.5rem]"></div>
+          <button id="game-new" class="glass-btn-primary px-6 py-2.5 rounded-2xl font-semibold text-sm mt-2">
+            <i data-lucide="refresh-cw" class="w-4 h-4 inline -mt-0.5 mr-1"></i> New word
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+ 
+  <!-- ======================= BOTTOM NAVIGATION ======================= -->
+  <nav class="fixed bottom-0 inset-x-0 z-40 glass-panel border-t border-neutral-200/60 dark:border-neutral-800/60 pb-[env(safe-area-inset-bottom)]">
+    <div class="max-w-md mx-auto relative grid grid-cols-4 h-16" id="bottom-nav">
+      <span id="nav-indicator" class="nav-indicator"></span>
+      <button class="nav-item active" data-nav="home"><i data-lucide="home" class="w-5 h-5"></i><span>Home</span></button>
+      <button class="nav-item" data-nav="vocabulary"><i data-lucide="book-open" class="w-5 h-5"></i><span>Vocabulary</span></button>
+      <button class="nav-item" data-nav="materials"><i data-lucide="layers" class="w-5 h-5"></i><span>Materials</span></button>
+      <button class="nav-item" data-nav="practice"><i data-lucide="gamepad-2" class="w-5 h-5"></i><span>Practice</span></button>
+    </div>
+  </nav>
+ 
+  <!-- ======================= AI CHAT ======================= -->
+  <button id="chat-bubble" class="fixed bottom-24 right-4 md:right-8 z-50 w-14 h-14 rounded-full glass-btn-primary flex items-center justify-center shadow-2xl shadow-brand/40" aria-label="Open AI tutor chat">
+    <i data-lucide="message-circle" class="w-6 h-6"></i>
+  </button>
+ 
+  <div id="chat-window" class="fixed bottom-24 right-4 md:right-8 z-50 w-[calc(100vw-2rem)] max-w-sm glass-card rounded-3xl overflow-hidden flex flex-col hidden chat-anim" style="height: 30rem;">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-neutral-200/60 dark:border-neutral-800/60 shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-xl bg-brand flex items-center justify-center"><i data-lucide="bot" class="w-4 h-4 text-white"></i></span>
+        <div>
+          <p class="font-bold text-sm leading-tight">AI Tutor</p>
+          <p class="text-[11px] text-brand leading-tight">Gemini · English coach</p>
+        </div>
+      </div>
+      <button id="chat-close" class="glass-btn w-8 h-8 rounded-full flex items-center justify-center" aria-label="Close chat"><i data-lucide="x" class="w-4 h-4"></i></button>
+    </div>
+    <div id="chat-messages" class="flex-1 overflow-y-auto px-4 py-3 space-y-3"></div>
+    <form id="chat-form" class="flex items-center gap-2 p-3 border-t border-neutral-200/60 dark:border-neutral-800/60 shrink-0">
+      <input id="chat-input" type="text" autocomplete="off" placeholder="Ask your English tutor…"
+             class="flex-1 bg-neutral-100 dark:bg-neutral-900 rounded-2xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand/50" />
+      <button type="submit" class="glass-btn-primary w-10 h-10 rounded-2xl flex items-center justify-center shrink-0" aria-label="Send message"><i data-lucide="send" class="w-4 h-4"></i></button>
+    </form>
+  </div>
+ 
+  <!-- ======================= SETTINGS MODAL ======================= -->
+  <div id="settings-modal" class="fixed inset-0 z-[60] hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="settings-backdrop"></div>
+    <div class="absolute bottom-0 inset-x-0 md:inset-0 md:m-auto md:h-fit max-w-md mx-auto glass-card md:rounded-3xl rounded-t-3xl p-6 modal-slide-up">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-extrabold text-lg">Settings</h3>
+        <button id="settings-close" class="glass-btn w-8 h-8 rounded-full flex items-center justify-center" aria-label="Close settings"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <label class="block text-sm font-semibold mb-1" for="gemini-key-input">Gemini API key</label>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">
+        Paste your own key to enable the AI tutor. Get one free at
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="text-brand underline">Google AI Studio</a>.
+        The key is stored only in your browser (localStorage).
+      </p>
+      <input id="gemini-key-input" type="password" placeholder="AIza…"
+             class="w-full bg-neutral-100 dark:bg-neutral-900 rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand/50" />
+      <div class="flex gap-2 mt-4">
+        <button id="gemini-key-save" class="glass-btn-primary flex-1 py-3 rounded-2xl font-semibold text-sm">Save key</button>
+        <button id="gemini-key-clear" class="glass-btn px-5 py-3 rounded-2xl font-semibold text-sm">Clear</button>
+      </div>
+      <p id="settings-status" class="text-xs mt-3 text-center min-h-[1rem]"></p>
+    </div>
+  </div>
+ 
+  <!-- App scripts (modular, relative paths for GitHub Pages) -->
+  <script src="src/js/data.js"></script>
+  <script src="src/js/dictionary.js"></script>
+  <script src="src/js/materials.js"></script>
+  <script src="src/js/games.js"></script>
+  <script src="src/js/ai-chat.js"></script>
+  <script src="src/js/app.js"></script>
 </body>
 </html>
-
